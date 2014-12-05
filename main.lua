@@ -76,17 +76,18 @@ function love.load()
     LoadTextures()
     LoadSounds()
 
+    global = {
+        showDebug = true,
+        state = 'mainmenu',
+    }
+
     menu = Menu()
-    menu:AddItem("Foo", function()
-    end)
-    menu:AddItem("Bar", function()
-    end)
     menu:AddItem("Exit", function()
         love.event.quit()
     end)
 
-    log = Log()
-    log:insert('initialized...')
+    debug = Log()
+    debug:insert('initialized...')
 end
 
 function love.update(delta)
@@ -97,9 +98,20 @@ function love.draw()
     love.graphics.setBackgroundColor(32, 32, 32)
     love.graphics.clear()
 
-    love.graphics.translate(0, 100)
-    menu:draw()
-    log:draw()
+    if global.state == 'mainmenu' then
+        -- render main menu
+        love.graphics.push()
+        love.graphics.translate(0, 300)
+        menu:draw()
+        love.graphics.pop()
+    end
+
+    -- show debug messages
+    if global.showDebug then
+        love.graphics.push()
+        debug:draw()
+        love.graphics.pop()
+    end
 end
 
 function love.keypressed(key, isRepeat)
