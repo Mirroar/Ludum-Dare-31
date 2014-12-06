@@ -4,6 +4,8 @@ function Dummy:construct(...)
     Enemy.construct(self, ...)
 
     self.speed = 0
+
+    self:SetHitRect(0.4, 0.6, 0.4, 0.6)
 end
 
 function Dummy:draw()
@@ -17,6 +19,7 @@ function Dummy:update(delta, ...)
 
     local player = self:TouchesPlayer()
     if player then
-        --TODO: push player away, dummy is shy...
+        -- push player away, dummy is shy...
+        self:PushAway(player, 5)
     end
 end

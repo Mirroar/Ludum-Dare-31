@@ -7,6 +7,8 @@ Ideas
 -----
 
 - Dungeon, complete on one screen
+- exit the game by leaving through the side of the window
 - (maybe) Includes options via switches or pushable blocks
 - Increasing difficulty when finished a dungeon
 - same layout, but random elements (traps may be active or not, monsters spawn or not)
+- Tiles will be 16px x 8px, looking from above at an angle

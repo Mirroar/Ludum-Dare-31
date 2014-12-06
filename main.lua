@@ -95,11 +95,11 @@ function love.load()
 
     -- initialize simple map
     -- TODO: move to new function
-    local width, height = 40, 22
+    local width, height = 40, 44
     map = Map(width, height)
     map:SetTileset(textures)
     map:SetTileOffset(1, 16, 0)
-    map:SetTileOffset(2, 0, 16)
+    map:SetTileOffset(2, 0, 8)
 
     for x = 1, width do
         for y = 1, height do

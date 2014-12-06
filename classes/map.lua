@@ -67,7 +67,7 @@ function Map:GetScreenPosition(...)
         y = y + self.yTileSize[i] * (coords[i] - 1)
     end
 
-    return x, y
+    return math.floor(x + 0.5), math.floor(y + 0.5)
 end
 
 -- given a screen position, find tiles that are on that position
@@ -132,18 +132,22 @@ function Map:ConstrainEntities(entities)
             -- x constraints
             if topLeft:IsBlocking() and bottomLeft:IsBlocking() then
                 entity:SetX(math.ceil(l) - hl + padding)
+                entity.vx = -entity.vx * entity.bouncyness
                 x, y, l, r, b, t, hl, hr, ht, hb, topLeft, topRight, bottomLeft, bottomRight = recalculateEntityPosition(self, entity)
             elseif topRight:IsBlocking() and bottomRight:IsBlocking() then
                 entity:SetX(math.floor(r) - hr - padding)
+                entity.vx = -entity.vx * entity.bouncyness
                 x, y, l, r, b, t, hl, hr, ht, hb, topLeft, topRight, bottomLeft, bottomRight = recalculateEntityPosition(self, entity)
             end
 
             -- y constraints
             if topLeft:IsBlocking() and topRight:IsBlocking() then
                 entity:SetY(math.ceil(t) - ht + padding)
+                entity.vy = -entity.vy * entity.bouncyness
                 x, y, l, r, b, t, hl, hr, ht, hb, topLeft, topRight, bottomLeft, bottomRight = recalculateEntityPosition(self, entity)
             elseif bottomLeft:IsBlocking() and bottomRight:IsBlocking() then
                 entity:SetY(math.floor(b) - hb - padding)
+                entity.vy = -entity.vy * entity.bouncyness
                 x, y, l, r, b, t, hl, hr, ht, hb, topLeft, topRight, bottomLeft, bottomRight = recalculateEntityPosition(self, entity)
             end
 
@@ -169,17 +173,21 @@ function Map:ConstrainEntities(entities)
 
                 if dx < dy then
                     entity:SetX(newX)
+                    entity.vx = -entity.vx * entity.bouncyness
                     --TODO: check if y constraint is now fine
                 else
                     entity:SetY(newY)
+                    entity.vy = -entity.vy * entity.bouncyness
                     --TODO: check if x constraint is now fine
                 end
             elseif newX then
                 -- only x constraint, no problem
                 entity:SetX(newX)
+                entity.vx = -entity.vx * entity.bouncyness
             elseif newY then
                 -- only y constraint, no problem
                 entity:SetY(newY)
+                entity.vy = -entity.vy * entity.bouncyness
             end
         end
     end

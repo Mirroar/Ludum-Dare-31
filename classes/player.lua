@@ -5,10 +5,7 @@ function Player:construct(...)
 
     self.speed = 5
 
-    self.hitLeft = 4/16
-    self.hitRight = 13/16
-    self.hitTop = 3/16
-    self.hitBottom = 13/16
+    self:SetHitRect(0.3, 0.7, 0.3, 0.7)
 end
 
 function Player:draw()
