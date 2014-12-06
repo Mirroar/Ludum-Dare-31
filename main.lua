@@ -82,6 +82,7 @@ function love.load()
     global = {
         showDebug = true,
         state = 'game',
+        keyspressed = {},
     }
 
     --[[menu = Menu()
@@ -113,6 +114,7 @@ function love.load()
 end
 
 function love.update(delta)
+    player:update(delta)
 end
 
 function love.draw()
@@ -137,4 +139,11 @@ function love.draw()
 end
 
 function love.keypressed(key, isRepeat)
+    if not isRepeat then
+        global.keyspressed[key] = true
+    end
+end
+
+function love.keyreleased(key)
+    global.keyspressed[key] = false
 end
