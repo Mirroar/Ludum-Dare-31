@@ -9,9 +9,57 @@ require('classes/actor')
 require('classes/player')
 require('classes/enemy')
 require('classes/dummy')
+require('classes/exit')
 require('classes/entitymanager')
 require('classes/menu')
 require('classes/log')
+
+local mapData = {
+    'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
+    'x                                      x',
+    'x                                      x',
+    'x                                      x',
+    'x                                      x',
+    'x                                      x',
+    'x                                      x',
+    'x                                      x',
+    'x                                      x',
+    'x                                      x',
+    'x                                      x',
+    'x                                      x',
+    'x                           xx#xx      x',
+    'x                           x   x      x',
+    'x                           x>  x      x',
+    'x                           x>  x      x',
+    'x                           x>  x      x',
+    'x                           x>  x      x',
+    'xxxxxxxxxx#xxxxxxxxxxxxxxxxxx>  x      x',
+    'x       x   x               x>  x      x',
+    'e       #   #             0 x>  x      n',
+    'x       x   x               x p x      x',
+    'xxxxxxxxxx#xxxxxxxxxxxxxxxxxxx#xxxxxxxxx',
+    'x             x                 x      x',
+    'x ^^^^^^^ ^^^ x                 x      x',
+    'x           ^ x                 #      x',
+    'x           ^ x                 x      x',
+    'x           ^ x                 x      x',
+    'x   ^^^^^^  ^ x                 x      x',
+    'x             xxxxxxxxxxxxxxxxxxx      x',
+    'x             x             x          x',
+    'x             x             x          x',
+    'x             x             x          x',
+    'xxxxx#xxxxxxxxx             x          x',
+    'x             x             x          x',
+    'x             x             x          x',
+    'x             x             x          x',
+    'x             x             x          x',
+    'x             x             x          x',
+    'x             x             x          x',
+    'x             #             x          x',
+    'x             x             #          x',
+    'x             x             x          x',
+    'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx',
+}
 
 function angle(x)
     -- helper function that makes sure angles are always between 0 and 360
@@ -101,29 +149,33 @@ function love.load()
     map:SetTileOffset(1, 16, 0)
     map:SetTileOffset(2, 0, 8)
 
-    for x = 1, width do
-        for y = 1, height do
+    entities = EntityManager()
+
+    for y = 1, height do
+        local line = mapData[y]
+        for x = 1, width do
+            local char = line:sub(x, x)
             local tile = map:GetTile(x, y)
             tile:SetType('floor')
 
-            if (x == 1 or y == 1 or x == width or y == height or love.math.noise(x / width, y / height) > 0.8) then
+            if char == 'x' then
                 tile:SetType('wall')
+            elseif char == 'p' then
+                -- initialize player
+                player = Player(x, y) -- intentionally global variable
+                entities:AddEntity(player)
+            elseif char == '0' then
+                -- initialize training dummy
+                local dummy = Dummy(x, y)
+                entities:AddEntity(dummy)
+            elseif char == 'e' then
+                -- initialize exit
+                local exit = Exit(x, y)
+                entities:AddEntity(exit)
             end
         end
     end
     debug:insert('map initialized')
-
-    -- initialize player
-    entities = EntityManager()
-
-    player = Player(5, 5)
-    entities:AddEntity(player)
-
-    -- initialize training dummy
-    local dummy = Dummy(10, 5)
-    entities:AddEntity(dummy)
-
-    debug:insert('entities initialized')
 end
 
 function love.update(delta)
