@@ -103,18 +103,26 @@ function love.load()
             local tile = map:GetTile(x, y)
             tile:SetType('floor')
 
-            if (x == 1 or y == 1 or x == width or y == height) then
+            if (x == 1 or y == 1 or x == width or y == height or love.math.noise(x / width, y / height) > 0.8) then
                 tile:SetType('wall')
             end
         end
     end
     debug:insert('map initialized')
 
+    -- initialize player
+    entities = EntityManager()
+
     player = Player(5, 5)
+    entities:AddEntity(player)
+
+    debug:insert('entities initialized')
 end
 
 function love.update(delta)
-    player:update(delta)
+    entities:update(delta)
+
+    map:ConstrainEntities(entities)
 end
 
 function love.draw()
@@ -126,7 +134,7 @@ function love.draw()
     love.graphics.scale(2)
 
     map:draw()
-    player:draw()
+    entities:draw()
 
     love.graphics.pop()
 
@@ -141,6 +149,9 @@ end
 function love.keypressed(key, isRepeat)
     if not isRepeat then
         global.keyspressed[key] = true
+    end
+    if key == "escape" then
+        love.event.quit()
     end
 end
 

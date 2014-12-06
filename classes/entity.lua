@@ -10,10 +10,17 @@ function Entity:construct(x, y)
 
     self.x = x or 0
     self.y = y or 0
+    self.previousX = self.x
+    self.previousY = self.y
     self.rotation = 0
     self.vx = 0
     self.vy = 0
     self.friction = 0
+
+    self.hitTop = 0
+    self.hitBottom = 0
+    self.hitLeft = 0
+    self.hitRight = 1
 end
 
 function Entity:GetX()
@@ -42,6 +49,17 @@ function Entity:SetPosition(x, y)
 
     self:SetX(x)
     self:SetY(y)
+end
+
+function Entity:SetHitRect(l, r, t, b)
+    self.hitLeft = l
+    self.hitRight = r
+    self.hitTop = t
+    self.hitBottom = b
+end
+
+function Entity:GetHitRect()
+    return self.hitLeft, self.hitRight, self.hitTop, self.hitBottom
 end
 
 function Entity:GetRotation()
@@ -84,6 +102,10 @@ function Entity:GetAngleTo(x, y)
 end
 
 function Entity:update(delta)
+    -- save previous position for reverence
+    self.previousX = self.x
+    self.previousY = self.y
+
     -- only do movement calculation if object has a noticeable velocity
     if math.abs(self.vx) > 0.5 or math.abs(self.vy) > 0.5 then
         local vAngle = math.atan2(self.vx, self.vy)

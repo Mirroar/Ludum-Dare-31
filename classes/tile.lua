@@ -1,6 +1,6 @@
 Tile = class()
 
-function Tile:cunstruct()
+function Tile:construct()
     self.tileType = nil
 end
 
@@ -10,4 +10,8 @@ end
 
 function Tile:GetType()
     return self.tileType
+end
+
+function Tile:IsBlocking()
+    return self.tileType == 'wall'
 end

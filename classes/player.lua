@@ -4,10 +4,17 @@ function Player:construct(...)
     Actor.construct(self, ...)
 
     self.speed = 5
+
+    self.hitLeft = 4/16
+    self.hitRight = 13/16
+    self.hitTop = 3/16
+    self.hitBottom = 13/16
 end
 
 function Player:draw()
-    textures:DrawSprite("player", self.x * 16, self.y * 16)
+    local x, y = map:GetScreenPosition(self.x, self.y)
+
+    textures:DrawSprite("player", x, y)
 end
 
 function Player:update(delta, ...)

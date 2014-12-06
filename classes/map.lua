@@ -99,3 +99,87 @@ function Map:_DrawRecursive(table, dimension, currentX, currentY)
         currentY = currentY + self.yTileSize[dimension]
     end
 end
+
+local function recalculateEntityPosition(self, entity)
+    local x, y = entity:GetX(), entity:GetY()
+    local hl, hr, ht, hb = entity:GetHitRect()
+
+    -- get current hit rect of player
+    local l = hl + x
+    local r = hr + x
+    local t = ht + y
+    local b = hb + y
+
+    local topLeft = self:GetTile(math.floor(l), math.floor(t))
+    local topRight = self:GetTile(math.floor(r), math.floor(t))
+    local bottomLeft = self:GetTile(math.floor(l), math.floor(b))
+    local bottomRight = self:GetTile(math.floor(r), math.floor(b))
+
+    return x, y, l, r, b, t, hl, hr, ht, hb, topLeft, topRight, bottomLeft, bottomRight
+end
+
+function Map:ConstrainEntities(entities)
+    local padding = 0.005
+    for i = 1, entities:GetCount() do
+        local entity = entities:Get(i)
+
+        if entity:IsInstanceOf(Actor) then
+            -- FIXME: this is really bad style...
+            local x, y, l, r, b, t, hl, hr, ht, hb, topLeft, topRight, bottomLeft, bottomRight = recalculateEntityPosition(self, entity)
+
+            -- first check if we are against a solid wall in one direction. changes can be applied immediately
+            -- x constraints
+            if topLeft:IsBlocking() and bottomLeft:IsBlocking() then
+                entity:SetX(math.ceil(l) - hl + padding)
+                x, y, l, r, b, t, hl, hr, ht, hb, topLeft, topRight, bottomLeft, bottomRight = recalculateEntityPosition(self, entity)
+            elseif topRight:IsBlocking() and bottomRight:IsBlocking() then
+                entity:SetX(math.floor(r) - hr - padding)
+                x, y, l, r, b, t, hl, hr, ht, hb, topLeft, topRight, bottomLeft, bottomRight = recalculateEntityPosition(self, entity)
+            end
+
+            -- y constraints
+            if topLeft:IsBlocking() and topRight:IsBlocking() then
+                entity:SetY(math.ceil(t) - ht + padding)
+                x, y, l, r, b, t, hl, hr, ht, hb, topLeft, topRight, bottomLeft, bottomRight = recalculateEntityPosition(self, entity)
+            elseif bottomLeft:IsBlocking() and bottomRight:IsBlocking() then
+                entity:SetY(math.floor(b) - hb - padding)
+                x, y, l, r, b, t, hl, hr, ht, hb, topLeft, topRight, bottomLeft, bottomRight = recalculateEntityPosition(self, entity)
+            end
+
+            -- afterwards, handle corners by applying the smalles change necessary
+            local newX, newY = nil, nil
+            -- x constraints
+            if topLeft:IsBlocking() or bottomLeft:IsBlocking() then
+                newX = math.ceil(l) - hl + padding
+            elseif topRight:IsBlocking() or bottomRight:IsBlocking() then
+                newX = math.floor(r) - hr - padding
+            end
+
+            -- y constraints
+            if topLeft:IsBlocking() or topRight:IsBlocking() then
+                newY = math.ceil(t) - ht + padding
+            elseif bottomLeft:IsBlocking() or bottomRight:IsBlocking() then
+                newY = math.floor(b) - hb - padding
+            end
+
+            if newX and newY then
+                local dx = math.abs(x - newX)
+                local dy = math.abs(y - newY)
+
+                if dx < dy then
+                    entity:SetX(newX)
+                    --TODO: check if y constraint is now fine
+                else
+                    entity:SetY(newY)
+                    --TODO: check if x constraint is now fine
+                end
+            elseif newX then
+                -- only x constraint, no problem
+                entity:SetX(newX)
+            elseif newY then
+                -- only y constraint, no problem
+                entity:SetY(newY)
+            end
+        end
+    end
+end

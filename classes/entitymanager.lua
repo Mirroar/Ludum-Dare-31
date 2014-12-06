@@ -14,6 +14,10 @@ function EntityManager:GetCount()
     return #(self.entities)
 end
 
+function EntityManager:Get(num)
+    return self.entities[num]
+end
+
 function EntityManager:update(delta)
     for _, entity in ipairs(self.entities) do
         entity:update(delta)
