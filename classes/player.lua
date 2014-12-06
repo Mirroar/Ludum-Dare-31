@@ -18,19 +18,20 @@ function Player:draw()
 end
 
 function Player:update(delta, ...)
-    Actor.update(self, delta, ...)
+    self.moveX = 0
+    self.moveY = 0
+    if global.keyspressed['w'] and not global.keyspressed['s'] then
+        self.moveY = -1
+    end
+    if global.keyspressed['s'] and not global.keyspressed['w'] then
+        self.moveY = 1
+    end
+    if global.keyspressed['a'] and not global.keyspressed['d'] then
+        self.moveX = -1
+    end
+    if global.keyspressed['d'] and not global.keyspressed['a'] then
+        self.moveX = 1
+    end
 
-    --TODO: diagonal movement is currently faster
-    if global.keyspressed['w'] then
-        self.y = self.y - self.speed * delta
-    end
-    if global.keyspressed['s'] then
-        self.y = self.y + self.speed * delta
-    end
-    if global.keyspressed['a'] then
-        self.x = self.x - self.speed * delta
-    end
-    if global.keyspressed['d'] then
-        self.x = self.x + self.speed * delta
-    end
+    Actor.update(self, delta, ...)
 end

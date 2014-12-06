@@ -25,6 +25,7 @@ function EntityManager:update(delta)
 end
 
 function EntityManager:draw()
+    --TODO: draw with y-ordering in mind
     for _, entity in ipairs(self.entities) do
         entity:draw()
     end

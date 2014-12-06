@@ -119,6 +119,7 @@ local function recalculateEntityPosition(self, entity)
 end
 
 function Map:ConstrainEntities(entities)
+    --TODO: a better way would probably be to constrain the entity's movement, e.g. don't move up when there's a wall there
     local padding = 0.005
     for i = 1, entities:GetCount() do
         local entity = entities:Get(i)

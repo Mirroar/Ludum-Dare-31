@@ -7,6 +7,8 @@ require('classes/entity')
 require('classes/bullet')
 require('classes/actor')
 require('classes/player')
+require('classes/enemy')
+require('classes/dummy')
 require('classes/entitymanager')
 require('classes/menu')
 require('classes/log')
@@ -51,6 +53,7 @@ local function LoadTextures()
     textures:DefineTile("floor", 2, 1)
 
     textures:DefineTile("player", 1, 2)
+    textures:DefineTile("dummy", 2, 2)
 end
 
 local function LoadSounds()
@@ -116,6 +119,10 @@ function love.load()
     player = Player(5, 5)
     entities:AddEntity(player)
 
+    -- initialize training dummy
+    local dummy = Dummy(10, 5)
+    entities:AddEntity(dummy)
+
     debug:insert('entities initialized')
 end
 
@@ -126,6 +133,7 @@ function love.update(delta)
 end
 
 function love.draw()
+    love.graphics.setColor(255, 255, 255, 255)
     love.graphics.setBackgroundColor(32, 32, 32)
     love.graphics.clear()
 
@@ -141,6 +149,7 @@ function love.draw()
     -- show debug messages
     if global.showDebug then
         love.graphics.push()
+        love.graphics.setColor(0, 0, 0, 255)
         debug:draw()
         love.graphics.pop()
     end

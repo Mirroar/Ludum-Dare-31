@@ -15,7 +15,6 @@ function Log:insert(text, prefix, tileIcon, padding)
 end
 
 function Log:draw()
-    love.graphics.setColor(255, 255, 255, 255)
     local count = math.max(0, self.numLines - #self.lines)
     for i = math.max(1, #self.lines - self.numLines + 1), #self.lines do
         local line = self.lines[i]
