@@ -43,14 +43,14 @@ function lerpAngle(min, max, percentile)
 end
 
 local function LoadTextures()
-    textures = TiledTextureAtlas("images/Textures.png")
+    textures = TiledTextureAtlas("images/textures.png")
     --textures:SetTileSize(32, 32)
-    --textures:SetTilePadding(2, 2)
-    --textures:SetTileOffset(2, 2)
-    textures:DefineTile("Spinner1", 1, 1)
-    textures:DefineTile("Spinner2", 2, 1)
-    textures:DefineTile("Spinner3", 3, 1)
-    textures:DefineTile("Spinner4", 4, 1)
+    textures:SetTilePadding(2, 2)
+    textures:SetTileOffset(2, 2)
+    textures:DefineTile("wall", 1, 1)
+    textures:DefineTile("floor", 2, 1)
+
+    textures:DefineTile("player", 1, 2)
 end
 
 local function LoadSounds()
@@ -70,6 +70,9 @@ function PlaySound(id)
 end
 
 function love.load()
+    debug = Log()
+    debug:insert('initialized...')
+
     love.window.setTitle("Ludum Dare")
     love.window.setMode(1280, 720)
 
@@ -78,44 +81,52 @@ function love.load()
 
     global = {
         showDebug = true,
-        state = 'mainmenu',
+        state = 'game',
     }
 
-    menu = Menu()
+    --[[menu = Menu()
     menu:AddItem("Exit", function()
         love.event.quit()
-    end)
+    end)--]]
 
-    -- sample code for initializing a map of some sorts
-    --[[
-    map = Map(10, 10)
+    -- initialize simple map
+    -- TODO: move to new function
+    local width, height = 40, 22
+    map = Map(width, height)
     map:SetTileset(textures)
     map:SetTileOffset(1, 16, 0)
     map:SetTileOffset(2, 0, 16)
 
-    local tile = map:GetTile(1, 1)
-    tile:SetType('foo')
-    --]]
+    for x = 1, width do
+        for y = 1, height do
+            local tile = map:GetTile(x, y)
+            tile:SetType('floor')
 
-    debug = Log()
-    debug:insert('initialized...')
+            if (x == 1 or y == 1 or x == width or y == height) then
+                tile:SetType('wall')
+            end
+        end
+    end
+    debug:insert('map initialized')
+
+    player = Player(5, 5)
 end
 
 function love.update(delta)
-    menu:update(delta)
 end
 
 function love.draw()
     love.graphics.setBackgroundColor(32, 32, 32)
     love.graphics.clear()
 
-    if global.state == 'mainmenu' then
-        -- render main menu
-        love.graphics.push()
-        love.graphics.translate(0, 300)
-        menu:draw()
-        love.graphics.pop()
-    end
+    -- all game graphics should be rendered in here to get magnified by 2
+    love.graphics.push()
+    love.graphics.scale(2)
+
+    map:draw()
+    player:draw()
+
+    love.graphics.pop()
 
     -- show debug messages
     if global.showDebug then
@@ -126,5 +137,4 @@ function love.draw()
 end
 
 function love.keypressed(key, isRepeat)
-    menu:keypressed(key)
 end
