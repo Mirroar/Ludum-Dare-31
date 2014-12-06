@@ -86,6 +86,17 @@ function love.load()
         love.event.quit()
     end)
 
+    -- sample code for initializing a map of some sorts
+    --[[
+    map = Map(10, 10)
+    map:SetTileset(textures)
+    map:SetTileOffset(1, 16, 0)
+    map:SetTileOffset(2, 0, 16)
+
+    local tile = map:GetTile(1, 1)
+    tile:SetType('foo')
+    --]]
+
     debug = Log()
     debug:insert('initialized...')
 end
